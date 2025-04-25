@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 #from HardwareController import HardwareController
 from ActionType import ActionType
 import threading
@@ -6,6 +7,7 @@ import time
 
 
 app = Flask(__name__)
+CORS(app)
 #iot_device = HardwareController()
 
 #def check_temperature() -> None:
@@ -45,7 +47,7 @@ def handle_door_action():
     return jsonify(data)
 
 
-@app.route('/actions/led', methods=['POST'])
+@app.route('/actions/temperature', methods=['POST'])
 def handle_led_action():
     action_data = request.get_json()
     action_str = action_data.get('action')
@@ -56,11 +58,11 @@ def handle_led_action():
         data = {'error': 'Invalid action type'}, 400
 
     match action:
-        case ActionType.ACTIVATE_LED:
+        case ActionType.RISE_TEMP:
             # iot_device.open_door()
             data = {'success': True, 'message': 'Successfully activated the led'}, 200
 
-        case ActionType.DEACTIVATE_LED:
+        case ActionType.LOWER_TEMP:
             # iot_device.close_door()
             data = {'success': True, 'message': 'Successfully deactivated the led'}, 200
 

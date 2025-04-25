@@ -5,8 +5,8 @@ class ActionType(Enum):
     CLOSE_DOOR = "CLOSE_DOOR"
     ACTIVATE_ALARM = "ACTIVATE_ALARM"
     DEACTIVATE_ALARM = "DEACTIVATE_ALARM"
-    ACTIVATE_LED = "ACTIVATE_LED"
-    DEACTIVATE_LED = "DEACTIVATE_LED"
+    RISE_TEMP = "RISE_TEMP"
+    LOWER_TEMP = "LOWER_TEMP"
 
     @classmethod
     def convert_str_action_to_enum(cls, action: str):
