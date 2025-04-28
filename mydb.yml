@@ -1,0 +1,22 @@
+version: '1'
+services:
+  phpmyadmin:
+    image: phpmyadmin:latest
+    restart: always
+    ports:
+      - "7777:80"
+    environment:
+      - PMA_HOST:db
+    depends_on:
+      - db
+    links:
+      - db
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass
+    restart: always
+    volumes:
+      - ./myvolume:/var/lib/mysql
