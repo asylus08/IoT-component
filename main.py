@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-#from HardwareController import HardwareController
+from HardwareController import HardwareController
 from ActionType import ActionType
 import threading
 import time
@@ -8,12 +8,12 @@ import time
 
 app = Flask(__name__)
 CORS(app)
-#iot_device = HardwareController()
+iot_device = HardwareController()
 
-#def check_temperature() -> None:
-#    while True:
-#        iot_device.check_temperature()
-#        time.sleep(10)
+def check_temperature() -> None:
+    while True:
+        iot_device.check_temperature()
+        time.sleep(10)
 
 
 @app.route('/test-connection', methods=['GET'])
@@ -34,11 +34,11 @@ def handle_door_action():
 
     match action:
         case ActionType.OPEN_DOOR:
-            #iot_device.open_door()
+            iot_device.open_door()
             data = {'success': True, 'message': 'Successfully opened door'}, 200
 
         case ActionType.CLOSE_DOOR:
-            #iot_device.close_door()
+            iot_device.close_door()
             data = {'success': True, 'message': 'Successfully closed door'}, 200
 
         case _:
@@ -59,11 +59,11 @@ def handle_led_action():
 
     match action:
         case ActionType.RISE_TEMP:
-            # iot_device.open_door()
+            iot_device.open_door()
             data = {'success': True, 'message': 'Successfully activated the led'}, 200
 
         case ActionType.LOWER_TEMP:
-            # iot_device.close_door()
+            iot_device.close_door()
             data = {'success': True, 'message': 'Successfully deactivated the led'}, 200
 
         case _:
@@ -84,11 +84,11 @@ def handle_alarm_action(action: ActionType):
 
     match action:
         case ActionType.ACTIVATE_ALARM:
-            # iot_device.open_door()
+            iot_device.open_door()
             data = {'success': True, 'message': 'Successfully activated the alarm'}, 200
 
         case ActionType.DEACTIVATE_ALARM:
-            # iot_device.close_door()
+            iot_device.close_door()
             data = {'success': True, 'message': 'Successfully deactivated the alarm'}, 200
 
         case _:
@@ -114,8 +114,8 @@ def handle_test_mode_action():
 
 
 if __name__ == '__main__':
-    #iot_thread = threading.Thread(target=check_temperature)
-    #iot_thread.daemon = True
-    #iot_thread.start()
+    iot_thread = threading.Thread(target=check_temperature)
+    iot_thread.daemon = True
+    iot_thread.start()
 
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host='10.166.30.126', port=5000, debug=True)
