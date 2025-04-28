@@ -84,11 +84,11 @@ def handle_alarm_action(action: ActionType):
 
     match action:
         case ActionType.ACTIVATE_ALARM:
-            iot_device.open_door()
+            iot_device.activate_alarm()
             data = {'success': True, 'message': 'Successfully activated the alarm'}, 200
 
         case ActionType.DEACTIVATE_ALARM:
-            iot_device.close_door()
+            iot_device.deactivate_alarm()
             data = {'success': True, 'message': 'Successfully deactivated the alarm'}, 200
 
         case _:
