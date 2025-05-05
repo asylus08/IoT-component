@@ -1,42 +1,55 @@
 import mysql.connector
+import firebase_admin
+from firebase_admin import credentials, db
+from firebase_admin.db import ServerValue
+
+cred = credentials.Certificate("")
+firebase_admin.initialize_app(cred, {
+            'databaseURL': ''
+        })
 
 class Database:
-    
+
     def __init__(self):
         self.mysql_conn = self.init_mysql_db_connection()
-        self.firebase_conn = self.init_firebase_db_connection()
-        
-        
+
     def init_mysql_db_connection(self):
-        
-        connection = mysql.connector.connect(
-            host = "localhost",
-            port = 3306,
-            user = "root",
-            password = "password",
-            database = "iot"
-        )
-        return connection
-    
-    
-    def init_firebase_db_connection(self):
-        pass
-    
-    
-    def write_data(self, temp, is_debug):
-        cursor = self.mysql_conn.cursor()
-        cursor.execute('INSERT INTO data (temp, debug) VALUES (%s, %s)', (temp, is_debug))
-        print(f'Result: {cursor.rowcount}')
-        cursor.execute('SELECT * FROM data')
-        print(cursor.fetchall())
-        self.mysql_conn.commit()
-        cursor.close()
-              
+        try:
+            connection = mysql.connector.connect(
+                host="localhost",
+                port=3306,
+                user="root",
+                password="password",
+                database="iot"
+            )
+            print("[MySQL] Connected successfully.")
+            return connection
+        except mysql.connector.Error as err:
+            print("[MySQL] Connection error:", err)
+            return None
 
-db = Database()
+    def write_local_data(self, temp, is_debug):
+        if not self.mysql_conn:
+            print("[MySQL] No connection.")
+            return
 
-db.write_data(25.6, False)
-              
-              
-        
-        
+        try:
+            cursor = self.mysql_conn.cursor()
+            cursor.execute('INSERT INTO data (temp, debug) VALUES (%s, %s)', (temp, is_debug))
+            self.mysql_conn.commit()
+            print(f'[MySQL] Inserted: temp={temp}, debug={is_debug}')
+            cursor.close()
+        except Exception as e:
+            print("[MySQL] Write error:", e)
+
+    def write_cloud_data(self, temp, is_debug):
+        try:
+            ref = db.reference('/data')
+            ref.push({
+                'temperature': temp,
+                'is_debug': is_debug,
+                'timestamp': ServerValue.TIMESTAMP
+            })
+            print(f'[Firebase] Data pushed: temp={temp}, debug={is_debug}')
+        except Exception as e:
+            print("[Firebase] Write error:", e)

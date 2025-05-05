@@ -13,7 +13,7 @@ iot_device = HardwareController()
 def check_temperature() -> None:
     while True:
         iot_device.check_temperature()
-        time.sleep(10)
+        time.sleep(15)
 
 
 @app.route('/test-connection', methods=['GET'])
