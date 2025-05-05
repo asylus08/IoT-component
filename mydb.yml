@@ -17,6 +17,8 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_USER: user
       MYSQL_PASSWORD: pass
+    ports:
+      - "3306:3306"
     restart: always
     volumes:
       - ./myvolume:/var/lib/mysql

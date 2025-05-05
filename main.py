@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, request
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from HardwareController import HardwareController
 from ActionType import ActionType
+from firedatabase import Database
 import threading
 import time
 
@@ -9,10 +10,14 @@ import time
 app = Flask(__name__)
 CORS(app)
 iot_device = HardwareController()
+db = Database()
 
 def check_temperature() -> None:
     while True:
         iot_device.check_temperature()
+        temp = iot_device.read_temp()
+        db.write_local_data(temp, iot_device.is_test_mode)
+        db.write_cloud_data(temp, iot_device.is_test_mode)
         time.sleep(15)
 
 
@@ -73,7 +78,8 @@ def handle_led_action():
 
 
 @app.route('/actions/alarm', methods=['POST'])
-def handle_alarm_action(action: ActionType):
+#@cross_origin()
+def handle_alarm_action():
     action_data = request.get_json()
     action_str = action_data.get('action')
     data = {}
@@ -118,4 +124,4 @@ if __name__ == '__main__':
     iot_thread.daemon = True
     iot_thread.start()
 
-    app.run(host='10.166.30.126', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

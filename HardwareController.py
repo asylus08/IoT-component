@@ -15,13 +15,14 @@ class HardwareController:
         GPIO.setmode(GPIO.BCM)
 
         # Setup du PiGPIOFactory, empeche le servo de 'jitter' en tout temps
-        os.system("echo sudo pigpiod")
+        #os.system("echo sudo pigpiod")
+        
         Device.pin_factory = PiGPIOFactory('127.0.0.1')
 
         self.current_temp = 0
 
         self.led = 19
-        self.buzzer = 4
+        self.buzzer = 17
         self.servo = 18
         self.dht = 24
 
