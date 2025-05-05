@@ -174,3 +174,5 @@ cython_debug/
 .pypirc
 
 myvolume/
+
+firebase_sdk_info.json
