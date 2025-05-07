@@ -20,7 +20,6 @@ def check_temperature() -> None:
         db.write_cloud_data(temp, iot_device.is_test_mode)
         time.sleep(15)
 
-
 @app.route('/test-connection', methods=['GET'])
 def test_connection():
     data = {'success': True}, 200
@@ -64,11 +63,17 @@ def handle_led_action():
 
     match action:
         case ActionType.RISE_TEMP:
-            iot_device.open_door()
+            iot_device.increase_temp()
+            temp = iot_device.read_temp()
+            db.write_local_data(temp, iot_device.is_test_mode)
+            db.write_cloud_data(temp, iot_device.is_test_mode)
             data = {'success': True, 'message': 'Successfully activated the led', 'temp': iot_device.current_temp}, 200
 
         case ActionType.LOWER_TEMP:
-            iot_device.close_door()
+            iot_device.decrease_temp()
+            temp = iot_device.read_temp()
+            db.write_local_data(temp, iot_device.is_test_mode)
+            db.write_cloud_data(temp, iot_device.is_test_mode)
             data = {'success': True, 'message': 'Successfully deactivated the led', 'temp': iot_device.current_temp}, 200
 
         case _:
@@ -105,16 +110,14 @@ def handle_alarm_action():
 
 @app.route('/settings/test-mode', methods=['POST'])
 def handle_test_mode_action():
-    action_data = request.get_json()
-    test_mode = action_data.get('test_value')
     data = {}
 
-    if test_mode not in [True, False]:
-        data = {'error': 'Invalid test mode value'}, 400
+    if iot_device.is_test_mode:
+        iot_device.deactivate_test_mode()
+    else:
+        iot_device.activate_test_mode()
 
-    # Change test mode value here
-
-    data = {'success': True, 'message': f"Test mode is now: {test_mode}", 'test_mode' : iot_devise.is_test_mode}, 200
+    data = {'success': True, 'message': f"Test mode is now: {iot_device.is_test_mode}", 'test_mode' : iot_device.is_test_mode}, 200
 
     return jsonify(data)
 
