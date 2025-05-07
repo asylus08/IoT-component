@@ -15,7 +15,7 @@ db = Database()
 def check_temperature() -> None:
     while True:
         iot_device.check_temperature()
-        temp = iot_device.read_temp()
+        temp = iot_device.current_temp
         db.write_local_data(temp, iot_device.is_test_mode)
         db.write_cloud_data(temp, iot_device.is_test_mode)
         time.sleep(15)
@@ -64,14 +64,14 @@ def handle_led_action():
     match action:
         case ActionType.RISE_TEMP:
             iot_device.increase_temp()
-            temp = iot_device.read_temp()
+            temp = iot_device.current_temp
             db.write_local_data(temp, iot_device.is_test_mode)
             db.write_cloud_data(temp, iot_device.is_test_mode)
             data = {'success': True, 'message': 'Successfully activated the led', 'temp': iot_device.current_temp}, 200
 
         case ActionType.LOWER_TEMP:
             iot_device.decrease_temp()
-            temp = iot_device.read_temp()
+            temp = iot_device.current_temp
             db.write_local_data(temp, iot_device.is_test_mode)
             db.write_cloud_data(temp, iot_device.is_test_mode)
             data = {'success': True, 'message': 'Successfully deactivated the led', 'temp': iot_device.current_temp}, 200
