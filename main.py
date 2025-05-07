@@ -40,11 +40,11 @@ def handle_door_action():
     match action:
         case ActionType.OPEN_DOOR:
             iot_device.open_door()
-            data = {'success': True, 'message': 'Successfully opened door'}, 200
+            data = {'success': True, 'message': 'Successfully opened door', 'is_door_open': iot_device.is_door_open}, 200
 
         case ActionType.CLOSE_DOOR:
             iot_device.close_door()
-            data = {'success': True, 'message': 'Successfully closed door'}, 200
+            data = {'success': True, 'message': 'Successfully closed door', 'is_door_open': iot_device.is_door_open}, 200
 
         case _:
             data = {'success': False, 'error': 'Invalid action type'}, 400
@@ -65,11 +65,11 @@ def handle_led_action():
     match action:
         case ActionType.RISE_TEMP:
             iot_device.open_door()
-            data = {'success': True, 'message': 'Successfully activated the led'}, 200
+            data = {'success': True, 'message': 'Successfully activated the led', 'temp': iot_device.current_temp}, 200
 
         case ActionType.LOWER_TEMP:
             iot_device.close_door()
-            data = {'success': True, 'message': 'Successfully deactivated the led'}, 200
+            data = {'success': True, 'message': 'Successfully deactivated the led', 'temp': iot_device.current_temp}, 200
 
         case _:
             data = {'success': False, 'error': 'Invalid action type'}, 400
@@ -114,7 +114,7 @@ def handle_test_mode_action():
 
     # Change test mode value here
 
-    data = {'success': True, 'message': f"Test mode is now: {test_mode}"}, 200
+    data = {'success': True, 'message': f"Test mode is now: {test_mode}", 'test_mode' : iot_devise.is_test_mode}, 200
 
     return jsonify(data)
 
@@ -124,4 +124,4 @@ if __name__ == '__main__':
     iot_thread.daemon = True
     iot_thread.start()
 
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)

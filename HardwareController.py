@@ -12,6 +12,7 @@ class HardwareController:
 
     def __init__(self, test_mode=False):
         self.is_test_mode = test_mode
+        self.is_door_open = False
         GPIO.setmode(GPIO.BCM)
 
         # Setup du PiGPIOFactory, empeche le servo de 'jitter' en tout temps
@@ -76,7 +77,7 @@ class HardwareController:
         self.is_test_mode = False
 
     def activate_alarm(self):
-        self.alarm.start(50)
+        self.alarm.start(100)
         GPIO.output(self.led, GPIO.HIGH)
 
     def deactivate_alarm(self):
@@ -84,9 +85,11 @@ class HardwareController:
         GPIO.output(self.led, GPIO.LOW)
 
     def close_door(self):
+        self.is_door_open = False
         self.door.min()
 
     def open_door(self):
+        self.is_door_open = True
         self.door.max()
 
     def increase_temp(self):
