@@ -20,7 +20,8 @@ class HardwareController:
         
         Device.pin_factory = PiGPIOFactory('127.0.0.1')
 
-        self.current_temp = 0
+        self.current_temp = 22
+        self.current_humidity = 0
 
         self.led = 19
         self.buzzer = 17
@@ -51,10 +52,20 @@ class HardwareController:
             print(self.temp_sensor.getTemperature())
 
         return self.current_temp
+    
+    def read_humidity(self):
+        self.temp_sensor = DHT.DHT(self.dht)
+        # On verifie si les donnees du capteur sont valides
+        if self.temp_sensor.readDHT11() == 0:
+            self.current_humidity = self.temp_sensor.getHumidity()
+            print(self.temp_sensor.getHumidity())
+
+        return self.current_humidity
 
     def check_temperature(self):
         if not self.is_test_mode:
             self.current_temp = self.read_temp()
+            self.current_humidity = self.read_humidity()
 
         if self.current_temp > self.MAXIMUM_SAFE_TEMP and self.status != Status.ALERT:
             print('Alert temp')

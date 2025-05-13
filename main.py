@@ -5,6 +5,8 @@ from ActionType import ActionType
 from firedatabase import Database
 import threading
 import time
+import requests
+import json
 
 
 app = Flask(__name__)
@@ -16,8 +18,16 @@ def check_temperature() -> None:
     while True:
         iot_device.check_temperature()
         temp = iot_device.current_temp
+        humidity = iot_device.current_humidity
         db.write_local_data(temp, iot_device.is_test_mode)
         db.write_cloud_data(temp, iot_device.is_test_mode)
+        
+        url = "http://thingsboard.cloud/api/v1/rXisHA1yTjlFnJN6inXy/telemetry"
+        headers = {"Content-type": "application/json"}
+        data = {"temperature": temp, "humidity": humidity}
+        requests.post(url, headers=headers, data=json.dumps(data))
+        print(f'[ThingsBoard] Inserted: temp={temp}, humididty={humidity}')
+            
         time.sleep(15)
 
 @app.route('/test-connection', methods=['GET'])
